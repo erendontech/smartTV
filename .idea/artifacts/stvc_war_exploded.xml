@@ -26,7 +26,9 @@
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-xc:1.6.3" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.9.0" />
           <element id="library" level="project" name="Maven: org.flywaydb:flyway-core:6.5.0" />
-          <element id="library" level="project" name="Maven: mysql:mysql-connector-java:unknown" />
+          <element id="library" level="project" name="Maven: mysql:mysql-connector-java:8.0.20" />
+          <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:3.6.1" />
+          <element id="library" level="project" name="Maven: javax.servlet:servlet-api:2.5" />
         </element>
       </element>
       <element id="directory" name="META-INF">
