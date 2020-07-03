@@ -8,6 +8,10 @@
 	<bean id="IContentDao" class="com.stvc.persistence.ContentDaoImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+
+	<bean id="FlywayStarter" class="com.stvc.config.FlywayStarter">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 	
 	<jee:jndi-lookup id="dataSource" jndi-name="java:jboss/datasources/stvcDB"/>
 
