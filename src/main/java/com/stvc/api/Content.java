@@ -1,9 +1,8 @@
 package com.stvc.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.stvc.api.entity.ResponseSTVC;
 import com.stvc.entity.Movie;
-import com.stvc.persistence.ContentDaoImpl;
+import com.stvc.persistence.FacadeDao;
 import com.stvc.persistence.IContentDao;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -28,8 +27,8 @@ public class Content {
     @Path("/get")
     @Produces("application/json")
     public ResponseSTVC getProductInJSON(@Context UriInfo uriInfo) {
-        IContentDao contentDao = (IContentDao) context.getBean("IContentDao");
-        List<Movie> movies = contentDao.getMovies();
+        FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
+        List<Movie> movies = facadeDao.contentDao.getMovies();
         ResponseSTVC<List<Movie>> response = new ResponseSTVC<List<Movie>>(uriInfo.getPath(),Response.Status.ACCEPTED,movies);
         return response;
     }

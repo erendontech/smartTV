@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface IContentDao {
 
-    public boolean createMovie(Movie movie);
+    boolean createMovie(Movie movie);
 
-    public boolean deleteMovie(Integer id);
+    boolean deleteMovie(Integer id);
 
-    public List<Movie> getMovies();
+    List<Movie> getMovies();
 
-    public Movie getMovieDetail(Integer id);
+    Movie getMovieDetail(Integer id);
 }
