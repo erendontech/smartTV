@@ -17,11 +17,6 @@ public class MovieListRowMapper implements RowMapper<List<Movie>> {
     public List<Movie> mapRow(ResultSet rs, int rowNum) throws SQLException {
         List<Movie> movies = new ArrayList<Movie>();
         Movie movie;
-        String genresDB;
-        String[] genresWithId;
-        String[] aux;
-        Genre genre;
-        Set<Genre> genres;
         StringBuilder description;
 
         do{
@@ -33,17 +28,7 @@ public class MovieListRowMapper implements RowMapper<List<Movie>> {
             movie.setDescription(description.toString());
             movie.setYear(rs.getInt("year"));
             movie.setFree(rs.getBoolean("free"));
-            genresDB = rs.getString("genres");
-            genresWithId = genresDB.split(",");
-            genres = new TreeSet<Genre>();
-            for(String item : genresWithId){
-                genre = new Genre();
-                aux = item.split("-");
-                genre.setId(Integer.valueOf(aux[0]));
-                genre.setName(aux[1]);
-                genres.add(genre);
-            }
-            movie.setGenres(genres);
+            movie.setGenres(RowMapperUtil.getGenresSet(rs.getString("genres")));
             movies.add(movie);
         }while(rs.next());
         return movies;

@@ -265,15 +265,15 @@ END $$
 CREATE PROCEDURE `getMovieDetail`(IN IN_MOVIE_ID BIGINT)
 BEGIN
 
-	SELECT m.name as 'movie_name',m.year,m.description,a.name,concat(q.name," - ",q.detail) as 'quality', m.imdb_rate,d.name,m.free, g.name as 'genres', c.name as 'casts'
+	SELECT m.id as 'movie_id',m.name as 'movie_name',m.year,m.description,a.id as 'audio_id',a.name as 'audio_name',q.id as 'quality_id', q.name as 'quality_name',q.detail as 'quality_detail', m.imdb_rate,d.id as 'director_id',d.name as 'director_name',m.free, g.genres as 'genres', c.cast as 'casts'
 	FROM movie m
 	JOIN m_audio a on m.audio_id = a.id
 	JOIN m_quality q on m.quality_id = q.id
 	JOIN m_director d on m.director_id = d.id
-	JOIN (SELECT group_concat(g.name) as 'name' from movie_genre mg
+	JOIN (SELECT group_concat(g.id,'-',g.name) as 'genres' from movie_genre mg
 	JOIN m_genre g on mg.id_genre = g.id
 	WHERE mg.id_movie = IN_MOVIE_ID) g
-	JOIN (SELECT group_concat(c.name) as 'name' from movie_cast mc
+	JOIN (SELECT group_concat(c.id,'-',c.name) as 'cast' from movie_cast mc
 	JOIN m_cast c on mc.id_cast = c.id
 	WHERE mc.id_movie = IN_MOVIE_ID) c
 	WHERE m.id = IN_MOVIE_ID;

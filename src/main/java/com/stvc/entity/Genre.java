@@ -23,12 +23,6 @@ public class Genre implements Comparable<Genre> {
     }
 
     public int compareTo(Genre o) {
-        int r;
-        if(id == o.id){
-            r = 0;
-        }else{
-            r = 1;
-        }
-        return r;
+        return id == o.id ? 0 : 1;
     }
 }
