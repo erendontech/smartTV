@@ -56,7 +56,7 @@ CREATE TABLE movie_genre(
 CREATE TABLE movie_cast(
 	id_movie bigint NOT NULL,
     id_cast int NOT NULL,
-    PRIMARY KEY (id_movie),
+    PRIMARY KEY (id_movie,id_cast),
     FOREIGN KEY (id_movie) REFERENCES movie(id),
     FOREIGN KEY (id_cast) REFERENCES m_cast(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
