@@ -5,7 +5,9 @@ import com.stvc.api.entity.ResponseSTVC;
 import com.stvc.entity.Movie;
 import com.stvc.persistence.ContentDaoImpl;
 import com.stvc.persistence.IContentDao;
+import org.springframework.context.ConfigurableApplicationContext;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,18 +16,21 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 
 @Path("/api/content")
 public class Content {
 
-    IContentDao contendao = new ContentDaoImpl();
+    @Inject
+    ConfigurableApplicationContext context;
 
     @GET
     @Path("/get")
     @Produces("application/json")
     public ResponseSTVC getProductInJSON(@Context UriInfo uriInfo) {
-        Movie movie = contendao.getMovieDetail(0);
-        ResponseSTVC<Movie> response = new ResponseSTVC<Movie>(uriInfo.getPath(),Response.Status.ACCEPTED,movie);
+        IContentDao contentDao = (IContentDao) context.getBean("IContentDao");
+        List<Movie> movies = contentDao.getMovies();
+        ResponseSTVC<List<Movie>> response = new ResponseSTVC<List<Movie>>(uriInfo.getPath(),Response.Status.ACCEPTED,movies);
         return response;
     }
 
