@@ -48,7 +48,7 @@ CREATE TABLE movie(
 CREATE TABLE movie_genre(
 	id_movie bigint NOT NULL,
     id_genre int NOT NULL,
-    PRIMARY KEY (id_movie),
+    PRIMARY KEY (id_movie,id_genre),
     FOREIGN KEY (id_movie) REFERENCES movie(id),
     FOREIGN KEY (id_genre) REFERENCES m_genre(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

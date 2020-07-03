@@ -5,7 +5,7 @@ READS SQL DATA
 DETERMINISTIC
 BEGIN
 	DECLARE audio_exist TINYINT;
-	SELECT COUNT(*) INTO audio_exist FROM m_audio WHERE id = IN_AUDIO_ID;
+	SELECT id INTO audio_exist FROM m_audio WHERE id = IN_AUDIO_ID;
 	RETURN audio_exist;
 END $$
 
@@ -16,12 +16,9 @@ BEGIN
 	DECLARE audio_id int;
 	SELECT id INTO audio_id FROM m_audio WHERE name like IN_AUDIO_NAME;
     IF(audio_id IS NULL) THEN
-		SELECT id into audio_id from m_audio WHERE name LIKE IN_AUDIO_NAME;
-        IF(audio_id IS NULL)THEN
-			INSERT INTO m_audio(`name`) VALUES (IN_AUDIO_NAME);
-			SELECT LAST_INSERT_ID() into audio_id;
-		 END IF;
-    END IF;
+		INSERT INTO m_audio(`name`) VALUES (IN_AUDIO_NAME);
+		SELECT LAST_INSERT_ID() into audio_id;
+	END IF;
 	RETURN audio_id;
 END $$
 
@@ -31,7 +28,7 @@ READS SQL DATA
 DETERMINISTIC
 BEGIN
 	DECLARE quality_exist TINYINT;
-	SELECT COUNT(*) INTO quality_exist FROM m_quality WHERE id = IN_QUALITY_ID;
+	SELECT id INTO quality_exist FROM m_quality WHERE id = IN_QUALITY_ID;
 	RETURN quality_exist;
 END $$
 
@@ -43,12 +40,9 @@ BEGIN
 	DECLARE quality_id int;
 	SELECT id INTO quality_id FROM m_quality WHERE name like IN_QUALITY_NAME;
     IF(quality_id IS NULL) THEN
-		SELECT id into quality_id from m_quality WHERE name LIKE IN_QUALITY_NAME;
-        IF(quality_id IS NULL)THEN
-			INSERT INTO m_quality(`name`,`detail`) VALUES (IN_QUALITY_NAME, IN_QUALITY_DETAIL);
-			SELECT LAST_INSERT_ID() into quality_id;
-		 END IF;
-    END IF;
+		INSERT INTO m_quality(`name`,`detail`) VALUES (IN_QUALITY_NAME, IN_QUALITY_DETAIL);
+		SELECT LAST_INSERT_ID() into quality_id;
+	END IF;
 	RETURN quality_id;
 END $$
 
@@ -57,7 +51,7 @@ READS SQL DATA
 DETERMINISTIC
 BEGIN
 	DECLARE director_exist TINYINT;
-	SELECT COUNT(*) INTO director_exist FROM m_director WHERE id = IN_DIRECTOR_ID;
+	SELECT id INTO director_exist FROM m_director WHERE id = IN_DIRECTOR_ID;
 	RETURN director_exist;
 END $$
 
@@ -68,13 +62,70 @@ BEGIN
 	DECLARE director_id int;
 	SELECT id INTO director_id FROM m_director WHERE name like IN_DIRECTOR_NAME;
     IF(director_id IS NULL) THEN
-		SELECT id into director_id from m_director WHERE name LIKE IN_DIRECTOR_NAME;
-        IF(director_id IS NULL)THEN
-			INSERT INTO m_director(`name`) VALUES (IN_DIRECTOR_NAME);
-			SELECT LAST_INSERT_ID() into director_id;
-		 END IF;
+		INSERT INTO m_director(`name`) VALUES (IN_DIRECTOR_NAME);
+		SELECT LAST_INSERT_ID() into director_id;
     END IF;
 	RETURN director_id;
+END $$
+
+
+CREATE FUNCTION f_exists_genre_by_id(IN_GENRE_ID INT) RETURNS tinyint(1)
+READS SQL DATA
+DETERMINISTIC
+BEGIN
+	DECLARE genre_exist TINYINT;
+	SELECT id INTO genre_exist FROM m_genre WHERE id = IN_GENRE_ID;
+	RETURN genre_exist;
+END $$
+
+CREATE FUNCTION f_exists_or_create_genre_by_name(IN_GENRE_NAME VARCHAR(255)) RETURNS int
+READS SQL DATA
+DETERMINISTIC
+BEGIN
+	DECLARE genre_id int;
+	SELECT id INTO genre_id FROM m_genre WHERE name like IN_GENRE_NAME;
+    IF(genre_id IS NULL) THEN
+		INSERT INTO m_genre(`name`) VALUES (IN_GENRE_NAME);
+		SELECT LAST_INSERT_ID() into genre_id;
+    END IF;
+	RETURN genre_id;
+END $$
+
+
+CREATE PROCEDURE `insert_genre_with_movie`(
+  IN IN_MOVIE_ID BIGINT,
+  IN IN_GENRES_LIST VARCHAR(2000))
+BEGIN
+	DECLARE audio_id INT;
+	DECLARE genre_with_id TEXT DEFAULT NULL;
+	DECLARE genre_with_id_length INT DEFAULT NULL;
+    DECLARE genre_id int;
+    DECLARE genre_name VARCHAR(255);
+    DECLARE final_genre_id int;
+	iterator:
+    LOOP
+		IF LENGTH(TRIM(IN_GENRES_LIST)) = 0 OR IN_GENRES_LIST IS NULL THEN LEAVE iterator; END IF;
+
+		SET genre_with_id = SUBSTRING_INDEX(IN_GENRES_LIST,',',1);
+		SET genre_with_id_length = LENGTH(genre_with_id);
+		SET IN_GENRES_LIST = INSERT(IN_GENRES_LIST,1,genre_with_id_length + 1,'');
+
+        SET genre_id = CONVERT(SUBSTRING_INDEX(genre_with_id,'-',1),UNSIGNED INTEGER);
+        SET genre_name = INSERT(genre_with_id,1,LENGTH(genre_id) + 1,'');
+
+		IF(genre_id <> 0) THEN
+			SELECT f_exists_genre_by_id(genre_id) into final_genre_id;
+			IF(final_genre_id IS NULL and genre_name IS NOT NULL) THEN
+				SELECT f_exists_or_create_genre_by_name(genre_name) into final_genre_id;
+			ELSE
+				SET final_genre_id = genre_id;
+			END IF;
+		ELSE
+			SELECT f_exists_or_create_genre_by_name(genre_name) into final_genre_id;
+		END IF;
+        INSERT INTO movie_genre(`id_movie`,`id_genre`) VALUES (IN_MOVIE_ID,final_genre_id);
+
+	END LOOP;
 END $$
 
 
@@ -96,28 +147,34 @@ BEGIN
 	DECLARE quality_id INT;
 	DECLARE director_id INT;
 
-    IF(IN_AUDIO_ID <> null) THEN
-		 SELECT f_exists_audio_by_id(IN_AUDIO_ID) into audio_id;
-         IF(audio_id = 0 and IN_AUDIO_NAME <> null) THEN
+    IF(IN_AUDIO_ID IS NOT NULL) THEN
+		SELECT f_exists_audio_by_id(IN_AUDIO_ID) into audio_id;
+        IF(audio_id IS NULL and IN_AUDIO_NAME IS NOT NULL) THEN
 			SELECT f_exists_or_create_audio_by_name(IN_AUDIO_ID) into audio_id;
-         END IF;
+		ELSE
+			SET audio_id = IN_AUDIO_ID;
+        END IF;
 	ELSE
 		SELECT f_exists_or_create_audio_by_name(IN_AUDIO_NAME) into audio_id;
     END IF;
 
-    IF(IN_QUALITY_ID <> null) THEN
-		 SELECT f_exists_quality_by_id(IN_QUALITY_ID) into quality_id;
-         IF(quality_id = 0 and IN_QUALITY_NAME <> null) THEN
+    IF(IN_QUALITY_ID IS NOT NULL) THEN
+		SELECT f_exists_quality_by_id(IN_QUALITY_ID) into quality_id;
+        IF(quality_id IS NULL and IN_QUALITY_NAME IS NOT NULL) THEN
 			SELECT f_exists_or_create_quality_by_name(IN_QUALITY_NAME, IN_QUALITY_DETAIL) into quality_id;
-         END IF;
+		ELSE
+			SET quality_id = IN_QUALITY_ID;
+		END IF;
 	ELSE
 		SELECT f_exists_or_create_quality_by_name(IN_QUALITY_NAME, IN_QUALITY_DETAIL) into quality_id;
     END IF;
 
-    IF(IN_DIRECTOR_ID <> null) THEN
+    IF(IN_DIRECTOR_ID IS NOT null) THEN
 		 SELECT f_exists_director_by_id(IN_DIRECTOR_ID) into director_id;
-         IF(director_id = 0 and IN_DIRECTOR_NAME <> null) THEN
+         IF(director_id IS NULL and IN_DIRECTOR_NAME IS NOT NULL) THEN
 			SELECT f_exists_or_create_director_by_name(IN_DIRECTOR_NAME) into director_id;
+		 ELSE
+			SET director_id = IN_DIRECTOR_ID;
          END IF;
 	ELSE
 		SELECT f_exists_or_create_director_by_name(IN_DIRECTOR_NAME) into director_id;
