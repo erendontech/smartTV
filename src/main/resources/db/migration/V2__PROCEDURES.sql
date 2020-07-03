@@ -141,11 +141,13 @@ CREATE PROCEDURE `register_movie`(
   IN IN_IMDB_RATE DOUBLE,
   IN IN_DIRECTOR_ID INT,
   IN IN_DIRECTOR_NAME VARCHAR(255),
-  IN IN_IS_FREE BOOLEAN)
+  IN IN_IS_FREE BOOLEAN,
+  IN IN_GENRES VARCHAR(2000))
 BEGIN
 	DECLARE audio_id INT;
 	DECLARE quality_id INT;
 	DECLARE director_id INT;
+	DECLARE movie_id BIGINT;
 
     IF(IN_AUDIO_ID IS NOT NULL) THEN
 		SELECT f_exists_audio_by_id(IN_AUDIO_ID) into audio_id;
@@ -181,5 +183,8 @@ BEGIN
     END IF;
 
 	INSERT INTO movie(`name`,`year`,`description`,`audio_id`,`quality_id`,`imdb_rate`,`director_id`,`free`) VALUES (IN_NAME,IN_YEAR,IN_DESCRIPTION,audio_id,quality_id,IN_IMDB_RATE,director_id,IN_IS_FREE);
-	SELECT LAST_INSERT_ID();
+	SELECT LAST_INSERT_ID() into movie_id;
+
+	CALL insert_genre_with_movie(movie_id,IN_GENRES);
+
 END $$
