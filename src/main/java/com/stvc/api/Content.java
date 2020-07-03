@@ -23,27 +23,27 @@ public class Content {
 
     @GET
     @Produces("application/json")
-    public ResponseSTVC getMovies(@Context UriInfo uriInfo) {
+    public ResponseSTVC getMovies() {
         FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
         List<Movie> movies = facadeDao.contentDao.getMovies();
-        ResponseSTVC<List<Movie>> response = new ResponseSTVC<List<Movie>>(uriInfo.getPath(),Response.Status.ACCEPTED,movies);
+        ResponseSTVC<List<Movie>> response = new ResponseSTVC<List<Movie>>(Response.Status.ACCEPTED,movies);
         return response;
     }
 
     @GET
     @Path("/{id_movie}")
     @Produces("application/json")
-    public ResponseSTVC getMovieDetail(@PathParam("id_movie") Integer idMovie, @Context UriInfo uriInfo) {
+    public ResponseSTVC getMovieDetail(@PathParam("id_movie") Integer idMovie) {
         FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
         Movie movie = facadeDao.contentDao.getMovieDetail(idMovie);
-        ResponseSTVC<Movie> response = new ResponseSTVC<Movie>(uriInfo.getPath(),Response.Status.ACCEPTED,movie);
+        ResponseSTVC<Movie> response = new ResponseSTVC<Movie>(Response.Status.ACCEPTED,movie);
         return response;
     }
 
     @POST
     @Path("/post")
     @Consumes("application/json")
-    public ResponseSTVC createMovie(Movie movie,@Context UriInfo uriInfo) {
+    public ResponseSTVC createMovie(Movie movie) {
         FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
         ResultValidation rv;
         boolean movieSaved;
@@ -53,12 +53,12 @@ public class Content {
         if(rv.result){
             movieSaved = facadeDao.contentDao.createMovie(movie);
             if(movieSaved){
-                response = new ResponseSTVC<String>(uriInfo.getPath(),Response.Status.ACCEPTED,null);
+                response = new ResponseSTVC<String>(Response.Status.ACCEPTED,null);
             }else{
-                response = new ResponseSTVC<String>(uriInfo.getPath(),Response.Status.INTERNAL_SERVER_ERROR,"Please try again later");
+                response = new ResponseSTVC<String>(Response.Status.INTERNAL_SERVER_ERROR,"Please try again later");
             }
         }else{
-            response = new ResponseSTVC<String>(uriInfo.getPath(),Response.Status.BAD_REQUEST,rv.error_messages);
+            response = new ResponseSTVC<String>(Response.Status.BAD_REQUEST,rv.error_messages);
         }
 
         return response;
@@ -67,7 +67,7 @@ public class Content {
     @DELETE
     @Path("/delete")
     @Consumes("application/json")
-    public ResponseSTVC deleteMovie(Integer id,@Context UriInfo uriInfo) {
+    public ResponseSTVC deleteMovie(Integer id) {
         FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
         boolean deleted;
         ResponseSTVC<String> response;
@@ -75,13 +75,13 @@ public class Content {
         if(id != null && id != 0){
             deleted = facadeDao.contentDao.deleteMovie(id);
             if(deleted){
-                response = new ResponseSTVC<String>(uriInfo.getPath(),Response.Status.ACCEPTED,null);
+                response = new ResponseSTVC<String>(Response.Status.ACCEPTED,null);
             }else{
-                response = new ResponseSTVC<String>(uriInfo.getPath(),Response.Status.INTERNAL_SERVER_ERROR,"Please try again later");
+                response = new ResponseSTVC<String>(Response.Status.INTERNAL_SERVER_ERROR,"Please try again later");
             }
 
         }else{
-            response = new ResponseSTVC<String>(uriInfo.getPath(),Response.Status.BAD_REQUEST,"Id not valid");
+            response = new ResponseSTVC<String>(Response.Status.BAD_REQUEST,"Id not valid");
         }
 
         return response;

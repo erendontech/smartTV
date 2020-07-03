@@ -1,48 +1,36 @@
 package com.stvc.api.entity;
 
 import javax.ws.rs.core.Response;
-import java.util.Calendar;
 
 public class ResponseSTVC<T> {
 
-    public ResponseSTVC(String _path, Response.Status _status, T _data) {
-        timestamp = Calendar.getInstance().getTimeInMillis();
-        path = _path;
-        status = _status;
+    public ResponseSTVC(Response.Status _status, T _data) {
+        status = _status.getStatusCode();
+        message = _status.getReasonPhrase();
         data = _data;
     }
 
-    private long timestamp;
+    private int status;
 
-    private String path;
+    private String message;
 
-    private Response.Status status;
-
-    private T data;
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public Response.Status getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(Response.Status status) {
+    public void setStatus(int status) {
         this.status = status;
     }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    private T data;
 
     public T getData() {
         return data;
