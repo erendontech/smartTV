@@ -30,6 +30,8 @@ public class Movie {
 
     private Set<Cast> casts;
 
+    private boolean free;
+
     public Integer getId() {
         return id;
     }
@@ -108,5 +110,13 @@ public class Movie {
 
     public void setCasts(Set<Cast> casts) {
         this.casts = casts;
+    }
+
+    public boolean isFree() {
+        return free;
+    }
+
+    public void setFree(boolean free) {
+        this.free = free;
     }
 }

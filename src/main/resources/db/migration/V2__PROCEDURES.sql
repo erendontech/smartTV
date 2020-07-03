@@ -248,8 +248,21 @@ BEGIN
 
 END $$
 
-CREATE PROCEDURE `getMovieDetail`(
-  IN IN_MOVIE_ID BIGINT)
+
+CREATE PROCEDURE `getMoviesList`()
+BEGIN
+
+	SELECT m.name,m.year,m.description,m.free, group_concat(concat(g.id,"-",g.name))as 'genres'
+	FROM movie m
+	JOIN movie_genre mg
+	JOIN m_genre g on mg.id_genre = g.id
+	WHERE mg.id_movie = m.id
+	group by m.id;
+
+END $$
+
+
+CREATE PROCEDURE `getMovieDetail`(IN IN_MOVIE_ID BIGINT)
 BEGIN
 
 	SELECT m.name as 'movie_name',m.year,m.description,a.name,concat(q.name," - ",q.detail) as 'quality', m.imdb_rate,d.name,m.free, g.name as 'genres', c.name as 'casts'
