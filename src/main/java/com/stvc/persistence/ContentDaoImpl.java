@@ -1,6 +1,7 @@
 package com.stvc.persistence;
 
 import com.stvc.entity.Movie;
+import com.stvc.persistence.rowmapper.MovieDetailRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -45,6 +46,9 @@ public class ContentDaoImpl implements IContentDao {
 
     @Override
     public Movie getMovieDetail(Integer id) {
-        return null;
+        String query = "{call getMovieDetail(?)}";
+        jdbcTemplate = new JdbcTemplate(dataSource);
+        Movie user = jdbcTemplate.queryForObject(query, new Object[]{id}, new MovieDetailRowMapper());
+        return user;
     }
 }
