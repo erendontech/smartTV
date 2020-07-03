@@ -1,7 +1,7 @@
 package com.stvc.config;
 
-import org.flywaydb.core.Flyway;
 import org.springframework.context.ConfigurableApplicationContext;
+
 import javax.inject.Inject;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
