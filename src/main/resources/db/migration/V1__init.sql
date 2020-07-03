@@ -2,32 +2,32 @@ CREATE TABLE m_genre (
   id int NOT NULL AUTO_INCREMENT,
   name varchar(255) NOT NULL,
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE m_audio (
   id int NOT NULL AUTO_INCREMENT,
   name varchar(255) NOT NULL,
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE m_quality (
   id int NOT NULL AUTO_INCREMENT,
   name varchar(255) NOT NULL,
   detail varchar(500) NOT NULL,
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE m_director (
   id int NOT NULL AUTO_INCREMENT,
   name varchar(255) NOT NULL,
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE m_cast (
   id int NOT NULL AUTO_INCREMENT,
   name varchar(255) NOT NULL,
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE movie(
   id bigint NOT NULL AUTO_INCREMENT,
@@ -43,7 +43,7 @@ CREATE TABLE movie(
   FOREIGN KEY (audio_id) REFERENCES m_audio(id),
   FOREIGN KEY (quality_id) REFERENCES m_quality(id),
   FOREIGN KEY (director_id) REFERENCES m_quality(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE movie_genre(
 	id_movie bigint NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE movie_genre(
     PRIMARY KEY (id_movie,id_genre),
     FOREIGN KEY (id_movie) REFERENCES movie(id),
     FOREIGN KEY (id_genre) REFERENCES m_genre(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE movie_cast(
 	id_movie bigint NOT NULL,
@@ -59,4 +59,4 @@ CREATE TABLE movie_cast(
     PRIMARY KEY (id_movie,id_cast),
     FOREIGN KEY (id_movie) REFERENCES movie(id),
     FOREIGN KEY (id_cast) REFERENCES m_cast(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
