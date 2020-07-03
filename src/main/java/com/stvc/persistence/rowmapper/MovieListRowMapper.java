@@ -21,6 +21,7 @@ public class MovieListRowMapper implements RowMapper<List<Movie>> {
 
         do{
             movie = new Movie();
+            movie.setId(rs.getInt("id"));
             movie.setTitle(rs.getString("name"));
             description = new StringBuilder(rs.getString("description"));
             description = new StringBuilder(description.substring(0,150));

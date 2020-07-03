@@ -252,7 +252,7 @@ END $$
 CREATE PROCEDURE `getMoviesList`()
 BEGIN
 
-	SELECT m.name,m.year,m.description,m.free, group_concat(concat(g.id,"-",g.name))as 'genres'
+	SELECT m.id,m.name,m.year,m.description,m.free, group_concat(concat(g.id,"-",g.name))as 'genres'
 	FROM movie m
 	JOIN movie_genre mg
 	JOIN m_genre g on mg.id_genre = g.id
