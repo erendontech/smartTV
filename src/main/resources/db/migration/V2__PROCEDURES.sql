@@ -103,14 +103,14 @@ BEGIN
     DECLARE final_genre_id int;
 	iterator:
     LOOP
-		IF LENGTH(TRIM(IN_GENRES_LIST)) = 0 OR IN_GENRES_LIST IS NULL THEN LEAVE iterator; END IF;
+		IF CHAR_LENGTH(TRIM(IN_GENRES_LIST)) = 0 OR IN_GENRES_LIST IS NULL THEN LEAVE iterator; END IF;
 
 		SET genre_with_id = SUBSTRING_INDEX(IN_GENRES_LIST,',',1);
-		SET genre_with_id_length = LENGTH(genre_with_id);
-		SET IN_GENRES_LIST = INSERT(IN_GENRES_LIST,1,genre_with_id_length + 1,'');
+		SET genre_with_id_length = CHAR_LENGTH(genre_with_id);
+		SET IN_GENRES_LIST = INSERT(IN_GENRES_LIST,1,genre_with_id_length+1,'');
 
         SET genre_id = CONVERT(SUBSTRING_INDEX(genre_with_id,'-',1),UNSIGNED INTEGER);
-        SET genre_name = INSERT(genre_with_id,1,LENGTH(genre_id) + 1,'');
+        SET genre_name = INSERT(genre_with_id,1,CHAR_LENGTH(genre_id) + 1,'');
 
 		IF(genre_id <> 0) THEN
 			SELECT f_exists_genre_by_id(genre_id) into final_genre_id;
@@ -122,6 +122,7 @@ BEGIN
 		ELSE
 			SELECT f_exists_or_create_genre_by_name(genre_name) into final_genre_id;
 		END IF;
+
         INSERT INTO movie_genre(`id_movie`,`id_genre`) VALUES (IN_MOVIE_ID,final_genre_id);
 
 	END LOOP;
@@ -160,14 +161,14 @@ BEGIN
     DECLARE final_cast_id int;
 	iterator:
     LOOP
-		IF LENGTH(TRIM(IN_CAST_LIST)) = 0 OR IN_CAST_LIST IS NULL THEN LEAVE iterator; END IF;
+		IF CHAR_LENGTH(TRIM(IN_CAST_LIST)) = 0 OR IN_CAST_LIST IS NULL THEN LEAVE iterator; END IF;
 
 		SET cast_with_id = SUBSTRING_INDEX(IN_CAST_LIST,',',1);
-		SET cast_with_id_length = LENGTH(cast_with_id);
+		SET cast_with_id_length = CHAR_LENGTH(cast_with_id);
 		SET IN_CAST_LIST = INSERT(IN_CAST_LIST,1,cast_with_id_length + 1,'');
 
         SET cast_id = CONVERT(SUBSTRING_INDEX(cast_with_id,'-',1),UNSIGNED INTEGER);
-        SET cast_name = INSERT(cast_with_id,1,LENGTH(cast_id) + 1,'');
+        SET cast_name = INSERT(cast_with_id,1,CHAR_LENGTH(cast_id) + 1,'');
 
 		IF(cast_id <> 0) THEN
 			SELECT f_exists_cast_by_id(cast_id) into final_cast_id;
