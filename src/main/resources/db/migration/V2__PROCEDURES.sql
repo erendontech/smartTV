@@ -189,7 +189,7 @@ CREATE PROCEDURE `register_movie`(
   IN IN_NAME VARCHAR(255),
   IN IN_YEAR INT,
   IN IN_DESCRIPTION VARCHAR(2000),
-  IN IN_AUDIO_ID INTEGER,
+  IN IN_AUDIO_ID INT,
   IN IN_AUDIO_NAME VARCHAR(255),
   IN IN_QUALITY_ID INT,
   IN IN_QUALITY_NAME VARCHAR(255),
@@ -206,10 +206,10 @@ BEGIN
 	DECLARE director_id INT;
 	DECLARE movie_id BIGINT;
 
-    IF(IN_AUDIO_ID IS NOT NULL) THEN
+    IF(IN_AUDIO_ID != 0) THEN
 		SELECT f_exists_audio_by_id(IN_AUDIO_ID) into audio_id;
         IF(audio_id IS NULL and IN_AUDIO_NAME IS NOT NULL) THEN
-			SELECT f_exists_or_create_audio_by_name(IN_AUDIO_ID) into audio_id;
+			SELECT f_exists_or_create_audio_by_name(IN_AUDIO_NAME) into audio_id;
 		ELSE
 			SET audio_id = IN_AUDIO_ID;
         END IF;
@@ -217,7 +217,7 @@ BEGIN
 		SELECT f_exists_or_create_audio_by_name(IN_AUDIO_NAME) into audio_id;
     END IF;
 
-    IF(IN_QUALITY_ID IS NOT NULL) THEN
+    IF(IN_QUALITY_ID != 0) THEN
 		SELECT f_exists_quality_by_id(IN_QUALITY_ID) into quality_id;
         IF(quality_id IS NULL and IN_QUALITY_NAME IS NOT NULL) THEN
 			SELECT f_exists_or_create_quality_by_name(IN_QUALITY_NAME, IN_QUALITY_DETAIL) into quality_id;
@@ -228,7 +228,7 @@ BEGIN
 		SELECT f_exists_or_create_quality_by_name(IN_QUALITY_NAME, IN_QUALITY_DETAIL) into quality_id;
     END IF;
 
-    IF(IN_DIRECTOR_ID IS NOT null) THEN
+    IF(IN_DIRECTOR_ID != 0) THEN
 		 SELECT f_exists_director_by_id(IN_DIRECTOR_ID) into director_id;
          IF(director_id IS NULL and IN_DIRECTOR_NAME IS NOT NULL) THEN
 			SELECT f_exists_or_create_director_by_name(IN_DIRECTOR_NAME) into director_id;
@@ -244,7 +244,9 @@ BEGIN
 
 	CALL insert_genre_with_movie(movie_id,IN_GENRES);
 
-    CALL insert_cast_with_movie(movie_id,IN_CAST);
+  CALL insert_cast_with_movie(movie_id,IN_CAST);
+
+  SELECT movie_id;
 
 END $$
 

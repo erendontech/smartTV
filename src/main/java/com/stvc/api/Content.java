@@ -41,15 +41,16 @@ public class Content {
     }
 
     @POST
-    @Path("/post")
+    @Path("")
     @Consumes("application/json")
+    @Produces("application/json")
     public ResponseSTVC createMovie(Movie movie) {
         FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
         ResultValidation rv;
         boolean movieSaved;
         rv = MovieValidator.isValidMovie(movie);
         ResponseSTVC<String> response;
-
+        rv.result = true;
         if(rv.result){
             movieSaved = facadeDao.contentDao.createMovie(movie);
             if(movieSaved){
@@ -75,7 +76,7 @@ public class Content {
         if(id != null && id != 0){
             deleted = facadeDao.contentDao.deleteMovie(id);
             if(deleted){
-                response = new ResponseSTVC<String>(Response.Status.ACCEPTED,null);
+                response = new ResponseSTVC<String>(Response.Status.ACCEPTED,"movie created!");
             }else{
                 response = new ResponseSTVC<String>(Response.Status.INTERNAL_SERVER_ERROR,"Please try again later");
             }

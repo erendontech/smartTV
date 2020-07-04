@@ -1,4 +1,4 @@
-package com.stvc.persistence.rowmapper;
+package com.stvc.persistence.util;
 
 import com.stvc.entity.Cast;
 import com.stvc.entity.Genre;

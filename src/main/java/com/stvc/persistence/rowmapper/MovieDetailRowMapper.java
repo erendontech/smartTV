@@ -4,6 +4,7 @@ import com.stvc.entity.Audio;
 import com.stvc.entity.Director;
 import com.stvc.entity.Movie;
 import com.stvc.entity.Quality;
+import com.stvc.persistence.util.RowMapperUtil;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

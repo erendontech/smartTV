@@ -1,15 +1,13 @@
 package com.stvc.persistence.rowmapper;
 
-import com.stvc.entity.Genre;
 import com.stvc.entity.Movie;
+import com.stvc.persistence.util.RowMapperUtil;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class MovieListRowMapper implements RowMapper<List<Movie>> {
 
