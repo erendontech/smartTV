@@ -23,30 +23,44 @@ public class ContentDaoImpl implements IContentDao {
         String genres, casts;
         genres = ContentDaoUtil.getGenresFormatDB(movie.getGenres());
         casts = ContentDaoUtil.getCastsFormatDB(movie.getCasts());
+        boolean result = true;
 
-        String query = "{call register_movie(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-        jdbcTemplate = new JdbcTemplate(dataSource);
-        Object[] parems = new Object[]{
-                movie.getTitle(),
-                movie.getYear(),
-                movie.getDescription(),
-                movie.getAudio().getId(),
-                movie.getAudio().getName(),
-                movie.getQuality().getId(),
-                movie.getQuality().getName(),
-                movie.getQuality().getDetail(),
-                movie.getImdbRate(),
-                movie.getDirector().getId(),
-                movie.getDirector().getName(),
-                movie.isFree(),genres,casts};
-        jdbcTemplate.update(query, parems);
+        try {
+            String query = "{call register_movie(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 
-        return true;
+            jdbcTemplate = new JdbcTemplate(dataSource);
+            Object[] parems = new Object[]{
+                    movie.getTitle(),
+                    movie.getYear(),
+                    movie.getDescription(),
+                    movie.getAudio().getId(),
+                    movie.getAudio().getName(),
+                    movie.getQuality().getId(),
+                    movie.getQuality().getName(),
+                    movie.getQuality().getDetail(),
+                    movie.getImdbRate(),
+                    movie.getDirector().getId(),
+                    movie.getDirector().getName(),
+                    movie.isFree(), genres, casts};
+            jdbcTemplate.update(query, parems);
+        } catch (Exception e) {
+            result = false;
+        }
+
+        return result;
     }
 
     @Override
     public boolean deleteMovie(Integer id) {
-        return false;
+        boolean result = true;
+        try {
+            String query = "{call deleteMovie(?)}";
+            jdbcTemplate = new JdbcTemplate(dataSource);
+            jdbcTemplate.update(query, new Object[]{id});
+        } catch (Exception e) {
+            result = false;
+        }
+        return result;
     }
 
     @Override

@@ -282,3 +282,12 @@ BEGIN
 	WHERE m.id = IN_MOVIE_ID;
 
 END $$
+
+CREATE PROCEDURE `deleteMovie`(IN IN_MOVIE_ID BIGINT)
+BEGIN
+
+  DELETE FROM movie_cast where id_movie = IN_MOVIE_ID;
+  DELETE FROM movie_genre where id_movie = IN_MOVIE_ID;
+  DELETE FROM movie where id = IN_MOVIE_ID;
+
+END $$

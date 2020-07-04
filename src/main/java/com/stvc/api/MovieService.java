@@ -1,6 +1,9 @@
 package com.stvc.api;
 
 import com.stvc.api.entity.ResponseSTVC;
+import com.stvc.api.handlers.MovieHandlers;
+import com.stvc.api.request.DeleteMovieRequest;
+import com.stvc.api.responses.MovieListResponse;
 import com.stvc.api.validators.MovieValidator;
 import com.stvc.api.validators.ResultValidation;
 import com.stvc.entity.Movie;
@@ -16,17 +19,21 @@ import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 @Path("/api/movie")
-public class Content {
+public class MovieService {
 
     @Inject
     ConfigurableApplicationContext context;
+
+    MovieHandlers mh = new MovieHandlers();
 
     @GET
     @Produces("application/json")
     public ResponseSTVC getMovies() {
         FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
+        MovieListResponse mData;
         List<Movie> movies = facadeDao.contentDao.getMovies();
-        ResponseSTVC<List<Movie>> response = new ResponseSTVC<List<Movie>>(Response.Status.ACCEPTED,movies);
+        mData = mh.processListMovies(movies);
+        ResponseSTVC<MovieListResponse> response = new ResponseSTVC<MovieListResponse>(Response.Status.ACCEPTED,mData);
         return response;
     }
 
@@ -41,7 +48,6 @@ public class Content {
     }
 
     @POST
-    @Path("")
     @Consumes("application/json")
     @Produces("application/json")
     public ResponseSTVC createMovie(Movie movie) {
@@ -66,17 +72,17 @@ public class Content {
     }
 
     @DELETE
-    @Path("/delete")
     @Consumes("application/json")
-    public ResponseSTVC deleteMovie(Integer id) {
+    @Produces("application/json")
+    public ResponseSTVC deleteMovie(DeleteMovieRequest request) {
         FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
         boolean deleted;
         ResponseSTVC<String> response;
 
-        if(id != null && id != 0){
-            deleted = facadeDao.contentDao.deleteMovie(id);
+        if(request.getId_movie() != null && request.getId_movie() != 0){
+            deleted = facadeDao.contentDao.deleteMovie(request.getId_movie());
             if(deleted){
-                response = new ResponseSTVC<String>(Response.Status.ACCEPTED,"movie created!");
+                response = new ResponseSTVC<String>(Response.Status.ACCEPTED,"movie deleted!");
             }else{
                 response = new ResponseSTVC<String>(Response.Status.INTERNAL_SERVER_ERROR,"Please try again later");
             }
