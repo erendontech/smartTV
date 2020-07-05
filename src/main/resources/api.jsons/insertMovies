@@ -1,0 +1,47 @@
+{
+  "title": "John Wick 3: Parabellum",
+  "year": 2019,
+  "genres": [{
+    "name": "Acción"
+  }, {
+    "name": "Crimen"
+  }, {
+    "name": "Suspenso"
+  }],
+  "description": "John Wick escapa luego de matar a un miembro de la asociación internacional de asesinos y, con una recompensa de 14 millones de dólares por su cabeza, es el objetivo de sicarios en todas partes.",
+  "audio": {
+    "name": "Latino e Inglés subtitulada"
+  },
+  "quality": {
+    "name": "4K Ultra HD HDR",
+    "detail": "Full HD Bluray"
+  },
+  "imdbRate" : 7.9,
+  "director": {
+    "name": "Chad Stahelski"
+  },
+  "casts": [
+    {
+      "name": "Keanu Reeves"
+    }, {
+      "name": "Halle Berry"
+    }, {
+      "name": "Ian McShane"
+    }, {
+      "name": "Laurence Fishburne"
+    }, {
+      "name": "Mark Dacascos"
+    }, {
+      "name": "Asia Kate Dillon"
+    }, {
+      "name": "Lance Reddick"
+    }, {
+      "name": "Tobias Segal"
+    }, {
+      "name": "Anjelica Huston"
+    }, {
+      "name": "Jerome Flynn"
+    }
+  ],
+  "free": true
+}
