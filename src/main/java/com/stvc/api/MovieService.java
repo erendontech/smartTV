@@ -32,8 +32,14 @@ public class MovieService {
         FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
         MovieListResponse mData;
         List<Movie> movies = facadeDao.contentDao.getMovies();
-        mData = mh.processListMovies(movies);
-        ResponseSTVC<MovieListResponse> response = new ResponseSTVC<MovieListResponse>(Response.Status.ACCEPTED,mData);
+        ResponseSTVC<MovieListResponse> response;
+        if(movies != null){
+            mData = mh.processListMovies(movies);
+            response = new ResponseSTVC<MovieListResponse>(Response.Status.ACCEPTED,mData);
+        }else{
+            response = new ResponseSTVC<MovieListResponse>(Response.Status.NO_CONTENT,null);
+        }
+
         return response;
     }
 
@@ -42,8 +48,18 @@ public class MovieService {
     @Produces("application/json")
     public ResponseSTVC getMovieDetail(@PathParam("id_movie") Integer idMovie) {
         FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
-        Movie movie = facadeDao.contentDao.getMovieDetail(idMovie);
-        ResponseSTVC<Movie> response = new ResponseSTVC<Movie>(Response.Status.ACCEPTED,movie);
+        ResponseSTVC<Movie> response;
+        if(idMovie != null && idMovie >= 1){
+            Movie movie = facadeDao.contentDao.getMovieDetail(idMovie);
+            if(movie != null){
+                response = new ResponseSTVC<Movie>(Response.Status.ACCEPTED,movie);
+            }else{
+                response = new ResponseSTVC<Movie>(Response.Status.NO_CONTENT,movie);
+            }
+        }else{
+            response = new ResponseSTVC<Movie>(Response.Status.BAD_REQUEST,null);
+        }
+
         return response;
     }
 
@@ -56,11 +72,11 @@ public class MovieService {
         boolean movieSaved;
         rv = MovieValidator.isValidMovie(movie);
         ResponseSTVC<String> response;
-        rv.result = true;
-        if(rv.result){
+        rv.isValid = true;
+        if(rv.isValid){
             movieSaved = facadeDao.contentDao.createMovie(movie);
             if(movieSaved){
-                response = new ResponseSTVC<String>(Response.Status.ACCEPTED,null);
+                response = new ResponseSTVC<String>(Response.Status.CREATED,null);
             }else{
                 response = new ResponseSTVC<String>(Response.Status.INTERNAL_SERVER_ERROR,"Please try again later");
             }
@@ -79,7 +95,7 @@ public class MovieService {
         boolean deleted;
         ResponseSTVC<String> response;
 
-        if(request.getId_movie() != null && request.getId_movie() != 0){
+        if(request.getId_movie() != null && request.getId_movie() >= 1){
             deleted = facadeDao.contentDao.deleteMovie(request.getId_movie());
             if(deleted){
                 response = new ResponseSTVC<String>(Response.Status.ACCEPTED,"movie deleted!");

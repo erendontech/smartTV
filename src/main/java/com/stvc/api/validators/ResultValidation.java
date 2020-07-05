@@ -2,7 +2,9 @@ package com.stvc.api.validators;
 
 public class ResultValidation {
 
-    public boolean result;
+    public boolean isValid;
 
     public String error_messages;
+
+
 }
