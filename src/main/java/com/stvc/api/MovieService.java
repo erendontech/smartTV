@@ -124,7 +124,7 @@ public class MovieService {
         MovieListResponse mData;
         ResponseSTVC<MovieListResponse> response;
 
-        if (keyword != null && keyword.length() >= 4) {
+        if (keyword != null && keyword.length() >= 3) {
             List<Movie> movies = facadeDao.contentDao.getMoviesAllData();
             movies = mh.filtersMoviesByKeyword(keyword, movies);
             if (movies.size() > 0) {
