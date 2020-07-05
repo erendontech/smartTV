@@ -13,4 +13,6 @@ public interface IContentDao {
     List<Movie> getMovies();
 
     Movie getMovieDetail(Integer id);
+
+    List<Movie> getMoviesAllData();
 }

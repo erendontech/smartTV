@@ -13,9 +13,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -30,15 +28,15 @@ public class MovieService {
     @GET
     @Produces("application/json")
     public ResponseSTVC getMovies() {
-        FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
+        FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context, "IContentDao");
         MovieListResponse mData;
         List<Movie> movies = facadeDao.contentDao.getMovies();
         ResponseSTVC<MovieListResponse> response;
-        if(movies != null){
+        if (movies != null) {
             mData = mh.processListMovies(movies);
-            response = new ResponseSTVC<MovieListResponse>(Response.Status.ACCEPTED,mData);
-        }else{
-            response = new ResponseSTVC<MovieListResponse>(Response.Status.NO_CONTENT,null);
+            response = new ResponseSTVC<MovieListResponse>(Response.Status.ACCEPTED, mData);
+        } else {
+            response = new ResponseSTVC<MovieListResponse>(Response.Status.NO_CONTENT, null);
         }
 
         return response;
@@ -48,17 +46,17 @@ public class MovieService {
     @Path("/{id_movie}")
     @Produces("application/json")
     public ResponseSTVC getMovieDetail(@PathParam("id_movie") Integer idMovie) {
-        FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
+        FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context, "IContentDao");
         ResponseSTVC<Movie> response;
-        if(idMovie != null && idMovie >= 1){
+        if (idMovie != null && idMovie >= 1) {
             Movie movie = facadeDao.contentDao.getMovieDetail(idMovie);
-            if(movie != null){
-                response = new ResponseSTVC<Movie>(Response.Status.ACCEPTED,movie);
-            }else{
-                response = new ResponseSTVC<Movie>(Response.Status.NO_CONTENT,movie);
+            if (movie != null) {
+                response = new ResponseSTVC<Movie>(Response.Status.ACCEPTED, movie);
+            } else {
+                response = new ResponseSTVC<Movie>(Response.Status.NO_CONTENT, movie);
             }
-        }else{
-            response = new ResponseSTVC<Movie>(Response.Status.BAD_REQUEST,null);
+        } else {
+            response = new ResponseSTVC<Movie>(Response.Status.BAD_REQUEST, null);
         }
 
         return response;
@@ -68,21 +66,21 @@ public class MovieService {
     @Consumes("application/json")
     @Produces("application/json")
     public ResponseSTVC createMovie(Movie movie) {
-        FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
+        FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context, "IContentDao");
         ResultValidation rv;
         boolean movieSaved;
 
         rv = MovieValidator.isValidMovie(movie);
         ResponseSTVC<String> response;
-        if(rv.isValid){
+        if (rv.isValid) {
             movieSaved = facadeDao.contentDao.createMovie(movie);
-            if(movieSaved){
-                response = new ResponseSTVC<String>(Response.Status.CREATED,null);
-            }else{
-                response = new ResponseSTVC<String>(Response.Status.INTERNAL_SERVER_ERROR,ResourceBundle.getBundle("message").getString("TRY_AGAIN_LATER"));
+            if (movieSaved) {
+                response = new ResponseSTVC<String>(Response.Status.CREATED, null);
+            } else {
+                response = new ResponseSTVC<String>(Response.Status.INTERNAL_SERVER_ERROR, ResourceBundle.getBundle("message").getString("TRY_AGAIN_LATER"));
             }
-        }else{
-            response = new ResponseSTVC<String>(Response.Status.BAD_REQUEST,rv.error_messages);
+        } else {
+            response = new ResponseSTVC<String>(Response.Status.BAD_REQUEST, rv.error_messages);
         }
 
         return response;
@@ -92,23 +90,56 @@ public class MovieService {
     @Consumes("application/json")
     @Produces("application/json")
     public ResponseSTVC deleteMovie(DeleteMovieRequest request) {
-        FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
+        FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context, "IContentDao");
         boolean deleted;
         ResponseSTVC<String> response;
 
-        if(request.getId_movie() != null && request.getId_movie() >= 1){
+        if (request.getId_movie() != null && request.getId_movie() >= 1) {
             deleted = facadeDao.contentDao.deleteMovie(request.getId_movie());
-            if(deleted){
-                response = new ResponseSTVC<String>(Response.Status.ACCEPTED,ResourceBundle.getBundle("message").getString("MOVIE_DELETED"));
-            }else{
-                response = new ResponseSTVC<String>(Response.Status.INTERNAL_SERVER_ERROR,ResourceBundle.getBundle("message").getString("TRY_AGAIN_LATER"));
+            if (deleted) {
+                response = new ResponseSTVC<String>(Response.Status.ACCEPTED, ResourceBundle.getBundle("message").getString("MOVIE_DELETED"));
+            } else {
+                response = new ResponseSTVC<String>(Response.Status.INTERNAL_SERVER_ERROR, ResourceBundle.getBundle("message").getString("TRY_AGAIN_LATER"));
             }
 
-        }else{
-            response = new ResponseSTVC<String>(Response.Status.BAD_REQUEST,ResourceBundle.getBundle("message").getString("MOVIE_INVALID_ID"));
+        } else {
+            response = new ResponseSTVC<String>(Response.Status.BAD_REQUEST, ResourceBundle.getBundle("message").getString("MOVIE_INVALID_ID"));
         }
 
         return response;
     }
+
+
+    /**
+     * The Ideal scenario is to have here a Solr o Elastic search implementation
+     *
+     * @param keyword
+     * @return
+     */
+    @GET
+    @Path("/search/{keyword}")
+    @Produces("application/json")
+    public ResponseSTVC getMoviesByKeyword(@PathParam("keyword") String keyword) {
+        FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context, "IContentDao");
+        MovieListResponse mData;
+        ResponseSTVC<MovieListResponse> response;
+
+        if (keyword != null && keyword.length() >= 4) {
+            List<Movie> movies = facadeDao.contentDao.getMoviesAllData();
+            movies = mh.filtersMoviesByKeyword(keyword, movies);
+            if (movies.size() > 0) {
+                mData = mh.processListMovies(movies);
+                response = new ResponseSTVC<MovieListResponse>(Response.Status.ACCEPTED, mData);
+            } else {
+                response = new ResponseSTVC<MovieListResponse>(Response.Status.NO_CONTENT,ResourceBundle.getBundle("message").getString("MOVIE_NOT_FUND_BY_KEYWORD"), null);
+            }
+        }else{
+            response = new ResponseSTVC<MovieListResponse>(Response.Status.BAD_REQUEST,ResourceBundle.getBundle("message").getString("MOVIE_INVALID_KEYWORD"), null);
+        }
+
+        return response;
+    }
+
+
 
 }

@@ -10,6 +10,12 @@ public class ResponseSTVC<T> {
         data = _data;
     }
 
+    public ResponseSTVC(Response.Status _status,String customMessage, T _data) {
+        status = _status.getStatusCode();
+        message = customMessage;
+        data = _data;
+    }
+
     private int status;
 
     private String message;

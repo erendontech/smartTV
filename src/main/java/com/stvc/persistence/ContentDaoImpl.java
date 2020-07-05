@@ -2,6 +2,7 @@ package com.stvc.persistence;
 
 import com.stvc.entity.Movie;
 import com.stvc.persistence.rowmapper.MovieDetailRowMapper;
+import com.stvc.persistence.rowmapper.MovieListAllDataRowMapper;
 import com.stvc.persistence.rowmapper.MovieListRowMapper;
 import com.stvc.persistence.util.ContentDaoUtil;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -91,5 +92,19 @@ public class ContentDaoImpl implements IContentDao {
         }
 
         return movie;
+    }
+
+    @Override
+    public List<Movie> getMoviesAllData() {
+        String query = "{call getMoviesAllData()}";
+        jdbcTemplate = new JdbcTemplate(dataSource);
+        List<Movie> movies = null;
+        try{
+            movies = jdbcTemplate.queryForObject(query, new Object[]{}, new MovieListAllDataRowMapper());
+        }catch (EmptyResultDataAccessException e){
+
+        }
+
+        return movies;
     }
 }
