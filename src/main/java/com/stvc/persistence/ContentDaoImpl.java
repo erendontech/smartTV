@@ -24,6 +24,7 @@ public class ContentDaoImpl implements IContentDao {
         String genres, casts;
         genres = ContentDaoUtil.getGenresFormatDB(movie.getGenres());
         casts = ContentDaoUtil.getCastsFormatDB(movie.getCasts());
+        ContentDaoUtil.dataIntegrity(movie);
         boolean result = true;
 
         try {

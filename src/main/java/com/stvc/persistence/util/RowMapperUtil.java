@@ -20,7 +20,9 @@ public class RowMapperUtil {
             genre = new Genre();
             aux = item.split("-");
             genre.setId(Integer.valueOf(aux[0]));
-            genre.setName(aux[1]);
+            if(aux.length>1){
+                genre.setName(aux[1]);
+            }
             genres.add(genre);
         }
         return genres;
@@ -38,7 +40,10 @@ public class RowMapperUtil {
             cast = new Cast();
             aux = item.split("-");
             cast.setId(Integer.valueOf(aux[0]));
-            cast.setName(aux[1]);
+            if(aux.length>1){
+                cast.setName(aux[1]);
+            }
+
             casts.add(cast);
         }
         return casts;

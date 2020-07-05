@@ -17,6 +17,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
+import java.util.ResourceBundle;
 
 @Path("/api/movie")
 public class MovieService {
@@ -70,15 +71,15 @@ public class MovieService {
         FacadeDao<IContentDao> facadeDao = new FacadeDao<IContentDao>(context,"IContentDao");
         ResultValidation rv;
         boolean movieSaved;
+
         rv = MovieValidator.isValidMovie(movie);
         ResponseSTVC<String> response;
-        rv.isValid = true;
         if(rv.isValid){
             movieSaved = facadeDao.contentDao.createMovie(movie);
             if(movieSaved){
                 response = new ResponseSTVC<String>(Response.Status.CREATED,null);
             }else{
-                response = new ResponseSTVC<String>(Response.Status.INTERNAL_SERVER_ERROR,"Please try again later");
+                response = new ResponseSTVC<String>(Response.Status.INTERNAL_SERVER_ERROR,ResourceBundle.getBundle("message").getString("TRY_AGAIN_LATER"));
             }
         }else{
             response = new ResponseSTVC<String>(Response.Status.BAD_REQUEST,rv.error_messages);
@@ -98,13 +99,13 @@ public class MovieService {
         if(request.getId_movie() != null && request.getId_movie() >= 1){
             deleted = facadeDao.contentDao.deleteMovie(request.getId_movie());
             if(deleted){
-                response = new ResponseSTVC<String>(Response.Status.ACCEPTED,"movie deleted!");
+                response = new ResponseSTVC<String>(Response.Status.ACCEPTED,ResourceBundle.getBundle("message").getString("MOVIE_DELETED"));
             }else{
-                response = new ResponseSTVC<String>(Response.Status.INTERNAL_SERVER_ERROR,"Please try again later");
+                response = new ResponseSTVC<String>(Response.Status.INTERNAL_SERVER_ERROR,ResourceBundle.getBundle("message").getString("TRY_AGAIN_LATER"));
             }
 
         }else{
-            response = new ResponseSTVC<String>(Response.Status.BAD_REQUEST,"Id not valid");
+            response = new ResponseSTVC<String>(Response.Status.BAD_REQUEST,ResourceBundle.getBundle("message").getString("MOVIE_INVALID_ID"));
         }
 
         return response;
