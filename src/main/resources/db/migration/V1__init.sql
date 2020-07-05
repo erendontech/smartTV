@@ -42,7 +42,7 @@ CREATE TABLE movie(
   PRIMARY KEY (id),
   FOREIGN KEY (audio_id) REFERENCES m_audio(id),
   FOREIGN KEY (quality_id) REFERENCES m_quality(id),
-  FOREIGN KEY (director_id) REFERENCES m_quality(id)
+  FOREIGN KEY (director_id) REFERENCES m_director(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE movie_genre(
